@@ -8,5 +8,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/repo', searchController.repoSearch);
+router.post('/user', searchController.userSearch);
 
 export { router as routes };

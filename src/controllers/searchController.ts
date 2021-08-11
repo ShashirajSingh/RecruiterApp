@@ -1,5 +1,6 @@
 import { Request, response, Response } from 'express';
 import apis from '../services/axios';
+import UserModel from '../models/user';
 import { User } from '../interfaces/userInterface';
 
 export default class {
@@ -27,6 +28,27 @@ export default class {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+  static async userSearch(req: Request, res: Response) {
+    try {
+      const query = { name: req.body.username };
+      const userData = await UserModel.findOne(query);
+
+      /* if user is present in our DB. */
+      if (userData !== null) {
+        res.send(userData);
+      } else {
+        const response = await apis.userSearch(req.body.username);
+        if (response.data) {
+          await UserModel.insertMany(response);
+          res.send(response.data);
+        } else {
+          res.send({ message: 'No user found' });
+        }
+      }
+    } catch (error) {
+      return error;
     }
   }
 }
